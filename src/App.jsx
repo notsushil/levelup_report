@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 /** ---- Config ---- */
 const HOURS = [
@@ -17,13 +17,11 @@ const ETHNICITIES = [
   { key: "Other" },
 ];
 
-/** ---- Styles via CSS vars ---- */
+/** ---- Styles ---- */
 const Theme = () => (
   <style>{`
     :root{
-      --bg1:#A56EFF; /* purple */
-      --bg2:#FF6FD8; /* pink */
-      --bg3:#FFC371; /* peach */
+      --bg1:#A56EFF; --bg2:#FF6FD8; --bg3:#FFC371;
       --card: rgba(255,255,255,0.18);
       --card-solid: rgba(255,255,255,0.10);
       --text-on:#fff;
@@ -31,139 +29,72 @@ const Theme = () => (
       --input:#ffffff22;
       --chip:#ffffff2e;
     }
-
     *{box-sizing:border-box}
     html, body, #root { height: 100%; }
 
-body {
-    margin: 0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-    color: var(--text-on);
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    position: relative;
-    min-height: 100vh;
-    background: none; /* remove black */
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color: var(--text-on);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      position: relative;
+      min-height: 100vh;
+      background: none;
+    }
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
         radial-gradient(150% 150% at -10% -10%, #A56EFF, var(--bg1) 50%),
         radial-gradient(150% 150% at 110% 110%, #FFC371, var(--bg3) 50%),
         linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3));
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
+      background-size: cover; background-repeat: no-repeat; background-attachment: fixed;
     }
 
-
-
-    .wrap{
-      width:100%;
-      max-width:1100px;
-      margin:24px auto;
-      padding:0 16px 56px;      /* extra bottom padding so nothing feels cut */
-    }
-
+    .wrap{ width:100%; max-width:1100px; margin:24px auto; padding:0 16px 56px; }
     .card{
-    width:100%;
-     /* Give the card its own gradient so it continues all the way down */
+      width:100%;
       background: linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3));
-     border: 1px solid var(--line);
-     border-radius: 18px;
-     padding: 20px;
-      position: relative;
-      overflow: visible;
-     box-shadow: 0 12px 40px #00000033, inset 0 1px 0 #ffffff22;
+      border:1px solid var(--line); border-radius:18px; padding:20px; position:relative;
+      overflow:visible; box-shadow:0 12px 40px #00000033, inset 0 1px 0 #ffffff22;
     }
-
-/* Optional frosted overlay for glassy effect */
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-  border-radius: 18px;
-  pointer-events:none;
-}
-
+    .card::before{
+      content:""; position:absolute; inset:0; border-radius:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      pointer-events:none;
+    }
 
     h1{margin:0 0 6px; text-align:center; font-size:28px}
     .muted{opacity:0.9; text-align:center; margin-bottom:16px}
-
     .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    .pill{
-      background: var(--card-solid);
-      border:1px solid var(--line);
-      border-radius:999px; padding:10px 14px; display:inline-flex; gap:8px; align-items:center
-    }
-    .switch{
-      display:inline-flex; background: var(--card-solid); border:1px solid var(--line);
-      border-radius:999px; overflow:hidden
-    }
-    .switch button{
-      padding:8px 12px; border:0; color:#fff; background:transparent; cursor:pointer
-    }
-    .switch button.active{background:#ffffff33; color:#111}
 
-    /* Scroll container so wide tables never get chopped */
-    .table-scroll{
-      width:100%;
-      overflow-x:auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:12px;
-      table-layout: fixed;       /* keep cells within card width */
-    }
-    th,td{padding:10px; border-bottom:1px solid var(--line); text-align:left; font-size:14px; word-wrap:break-word}
+    .table-scroll{ width:100%; overflow-x:auto; -webkit-overflow-scrolling: touch; }
+    table{ width:100%; border-collapse:collapse; margin-top:12px; table-layout: fixed; }
+    th,td{ padding:10px; border-bottom:1px solid var(--line); text-align:left; font-size:14px; word-wrap:break-word }
     th{opacity:0.95}
-    th:last-child, td:last-child { width: 88px; }  /* space for Edit button */
+    th:last-child, td:last-child { width: 88px; }  /* Edit btn col */
 
     input{
       width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line);
       background:var(--input); color:#fff; outline:none
     }
+    .money{ text-align:right; }               /* right-align money */
+    .readonly{ opacity:.9 }                   /* for auto-filled increments */
+
     .chip{display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border-radius:999px; background:var(--chip); border:1px solid var(--line); margin:2px}
-    .btn{
-      padding:10px 14px; border-radius:12px; border:1px solid var(--line);
-      background:#ffffff; color:#111; font-weight:700; cursor:pointer
-    }
+    .btn{ padding:10px 14px; border-radius:12px; border:1px solid var(--line); background:#ffffff; color:#111; font-weight:700; cursor:pointer }
     .btn.ghost{background:transparent; color:#fff}
-    .btn.gradient{
-      background: linear-gradient(90deg, var(--bg1), var(--bg2), var(--bg3));
-      color:#111; border:none
-    }
+    .btn.gradient{ background: linear-gradient(90deg, var(--bg1), var(--bg2), var(--bg3)); color:#111; border:none }
     .footer{display:flex; gap:12px; justify-content:flex-end; margin-top:18px}
     .divider{height:1px; background:var(--line); margin:18px 0}
 
-    /* Edit drawer */
-    .drawer{
-      background:#00000044; position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-      padding:20px;
-    }
-    .sheet{
-      width:680px; max-width:100%; background:#1f1637cc; border:1px solid var(--line);
-      border-radius:16px; padding:18px; backdrop-filter: blur(10px)
-    }
+    .drawer{ background:#00000044; position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .sheet{ width:680px; max-width:100%; background:#1f1637cc; border:1px solid var(--line); border-radius:16px; padding:18px; backdrop-filter: blur(10px) }
     .sheet h3{margin:0 0 8px}
     .sheet .row{align-items:flex-end}
     .sheet select, .sheet input{background:#2a2144; border-color:#ffffff2e}
-    .close-x{
-      position:absolute; right:18px; top:14px; background:#ffffff22; border:1px solid var(--line);
-      border-radius:10px; padding:6px 9px; cursor:pointer
-    }
+    .close-x{ position:absolute; right:18px; top:14px; background:#ffffff22; border:1px solid var(--line); border-radius:10px; padding:6px 9px; cursor:pointer }
 
     .legend{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
     .dot{width:10px; height:10px; border-radius:50%; display:inline-block; background:#fff; opacity:0.9}
@@ -171,46 +102,52 @@ body::before {
 );
 
 /** ---- Helpers ---- */
+const moneyFmt = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+const toMoney = (n) => isFinite(n) ? `$${moneyFmt.format(n)}` : "";
+const parseMoney = (v) => Number(String(v).replace(/[^0-9.\-]/g, "")) || 0;
+
 const emptyRow = (hour) => ({
   hour,
-  turnover: "",
-  incK: "",
-  totalK: "",
+  turnover: "",   // we store as a string (may include $ after blur)
   egm: "",
-  vip: {} // { 'Middle Eastern': number, ... }
+  vip: {}         // { 'Middle Eastern': number, ... }
 });
-
-function readNumber(v) {
-  const n = Number(String(v).trim());
-  return Number.isFinite(n) ? n : 0;
-}
 
 /** ---- Main ---- */
 export default function App() {
-  const [mode, setMode] = useState("off"); // "off" | "3h"
   const [rows, setRows] = useState(() => {
     const saved = localStorage.getItem("levelup_report_draft");
-    if (saved) {
-      try { return JSON.parse(saved); } catch {}
-    }
+    if (saved) { try { return JSON.parse(saved); } catch {} }
     return HOURS.map(emptyRow);
   });
 
-  const [editing, setEditing] = useState(null); // index being edited or null
+  const [editing, setEditing] = useState(null);
   const [editEthnicity, setEditEthnicity] = useState(ETHNICITIES[0].key);
   const [editCount, setEditCount] = useState("");
 
-  /** Aggregate for legend */
+  /** Aggregate for legend (EGM denominator = sum of egm across rows) */
   const totals = useMemo(() => {
     const all = Object.fromEntries(ETHNICITIES.map(e => [e.key, 0]));
     let egmSum = 0;
     rows.forEach(r => {
-      egmSum += readNumber(r.egm);
+      egmSum += parseMoney(r.egm);            // egm is numeric text but safe to parse
       for (const [k, v] of Object.entries(r.vip || {})) {
-        all[k] = (all[k] || 0) + readNumber(v);
+        all[k] = (all[k] || 0) + (Number(v) || 0);
       }
     });
     return { all, egmSum };
+  }, [rows]);
+
+  /** Compute increments from turnovers (read-only cells) */
+  const increments = useMemo(() => {
+    const inc = [];
+    for (let i = 0; i < rows.length; i++) {
+      const cur = parseMoney(rows[i].turnover);
+      const prev = i === 0 ? 0 : parseMoney(rows[i - 1].turnover);
+      const val = i === 0 ? cur : (cur - prev);
+      inc.push(val < 0 ? 0 : val);            // no negatives
+    }
+    return inc;
   }, [rows]);
 
   /** Actions */
@@ -218,6 +155,15 @@ export default function App() {
     setRows(prev => {
       const next = [...prev];
       next[i] = { ...next[i], [key]: value };
+      return next;
+    });
+  }
+
+  function formatTurnoverOnBlur(i) {
+    setRows(prev => {
+      const next = [...prev];
+      const n = parseMoney(next[i].turnover);
+      next[i] = { ...next[i], turnover: n ? toMoney(n) : "" };
       return next;
     });
   }
@@ -230,13 +176,13 @@ export default function App() {
 
   function addVip() {
     if (editing == null) return;
-    const c = readNumber(editCount);
+    const c = Number(editCount);
     if (!c) return;
     setRows(prev => {
       const next = [...prev];
       const r = { ...next[editing] };
       const vip = { ...(r.vip || {}) };
-      vip[editEthnicity] = readNumber(vip[editEthnicity]) + c;
+      vip[editEthnicity] = (Number(vip[editEthnicity]) || 0) + c;
       r.vip = vip;
       next[editing] = r;
       return next;
@@ -261,18 +207,12 @@ export default function App() {
     localStorage.setItem("levelup_report_draft", JSON.stringify(rows));
     alert("Draft saved locally.");
   }
-
   function clearDraft() {
     localStorage.removeItem("levelup_report_draft");
     alert("Local draft cleared.");
   }
-
   function submit() {
-    const payload = {
-      mode,
-      submittedAt: new Date().toISOString(),
-      rows
-    };
+    const payload = { submittedAt: new Date().toISOString(), rows };
     console.log("SUBMIT PAYLOAD →", payload);
     alert("Submitted (check the console). We’ll wire email/API next.");
   }
@@ -283,28 +223,9 @@ export default function App() {
       <div className="wrap">
         <div className="card">
           <h1>LevelUP Shift Report</h1>
-          <div className="muted">VIP counter grid · live ethnicity mix</div>
+          <div className="muted">Turnover Table 🎰</div>
 
-          <div className="row" style={{justifyContent:"space-between", marginTop:6}}>
-            <div className="row">
-              <div className="pill">Average Bet Mode:</div>
-              <div className="switch">
-                <button
-                  className={mode==="off" ? "active" : ""}
-                  onClick={()=>setMode("off")}
-                >Off</button>
-                <button
-                  className={mode==="3h" ? "active" : ""}
-                  onClick={()=>setMode("3h")}
-                >Every 3 Hours</button>
-              </div>
-            </div>
-
-            <div className="pill">
-              Current denominator · EGM in play: <strong style={{marginLeft:6}}>{totals.egmSum || 0}</strong>
-            </div>
-          </div>
-
+          {/* TABLE */}
           <div className="table-scroll">
             <table>
               <thead>
@@ -312,7 +233,6 @@ export default function App() {
                   <th style={{width:80}}>Time</th>
                   <th>Turnover</th>
                   <th>Increments (’000s)</th>
-                  <th>Turnover Total (’000s)</th>
                   <th>EGM in play</th>
                   <th style={{minWidth:240}}>VIP Mix</th>
                   <th></th>
@@ -322,22 +242,39 @@ export default function App() {
                 {rows.map((r, i) => (
                   <tr key={r.hour}>
                     <td>{r.hour}</td>
+
+                    {/* Turnover (editable, $ on blur) */}
                     <td>
-                      <input placeholder="$" value={r.turnover}
-                        onChange={e=>updateCell(i,"turnover",e.target.value)} />
+                      <input
+                        className="money"
+                        placeholder="$"
+                        value={r.turnover}
+                        onChange={e=>updateCell(i, "turnover", e.target.value)}
+                        onBlur={()=>formatTurnoverOnBlur(i)}
+                      />
                     </td>
+
+                    {/* Increments (auto, read-only, computed from turnovers) */}
                     <td>
-                      <input placeholder="000s" value={r.incK}
-                        onChange={e=>updateCell(i,"incK",e.target.value)} />
+                      <input
+                        className="money readonly"
+                        value={increments[i] ? toMoney(increments[i]) : ""}
+                        placeholder="000s"
+                        readOnly
+                        tabIndex={-1}
+                      />
                     </td>
+
+                    {/* EGM in play (numeric) */}
                     <td>
-                      <input placeholder="000s" value={r.totalK}
-                        onChange={e=>updateCell(i,"totalK",e.target.value)} />
+                      <input
+                        placeholder="#"
+                        value={r.egm}
+                        onChange={e=>updateCell(i, "egm", e.target.value)}
+                      />
                     </td>
-                    <td>
-                      <input placeholder="#" value={r.egm}
-                        onChange={e=>updateCell(i,"egm",e.target.value)} />
-                    </td>
+
+                    {/* VIP Mix chips */}
                     <td>
                       {Object.keys(r.vip||{}).length === 0 ? (
                         <span className="muted" style={{fontSize:13}}>—</span>
@@ -349,6 +286,7 @@ export default function App() {
                         </div>
                       )}
                     </td>
+
                     <td>
                       <button className="btn" onClick={()=>openEdit(i)}>Edit</button>
                     </td>
@@ -360,9 +298,11 @@ export default function App() {
 
           <div className="divider" />
 
-          {/* Legend */}
+          {/* Legend (aggregated vs total EGM) */}
           <div className="legend">
-            <div style={{width:"100%", fontWeight:700, marginBottom:4}}>VIP Ethnicity Mix (relative to current EGM in play)</div>
+            <div style={{width:"100%", fontWeight:700, marginBottom:4}}>
+              VIP Ethnicity Mix 
+            </div>
             {ETHNICITIES.map((e) => {
               const count = totals.all[e.key] || 0;
               const pct = totals.egmSum > 0 ? Math.round((count / totals.egmSum) * 100) : 0;
@@ -375,9 +315,6 @@ export default function App() {
                 </div>
               );
             })}
-            <div style={{width:"100%", opacity:.9, marginTop:6, fontSize:13}}>
-              Example: if 2 Middle Eastern VIPs and current EGM in play is 4, the bar shows 50% for Middle Eastern.
-            </div>
           </div>
 
           <div className="footer">
