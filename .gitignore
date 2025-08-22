@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Allow React UI Logs component
+!src/components/Logs/
+!src/components/Logs/**
