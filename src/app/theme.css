@@ -1,0 +1,82 @@
+:root{
+  --bg1:#A56EFF; --bg2:#FF6FD8; --bg3:#FFC371;
+  --card: rgba(255,255,255,0.18);
+  --card-solid: rgba(255,255,255,0.10);
+  --text-on:#fff;
+  --line: rgba(255,255,255,0.25);
+  --input:#ffffff22;
+  --chip:#ffffff2e;
+}
+*{box-sizing:border-box}
+html, body, #root { height: 100%; }
+body {
+  margin: 0; color: var(--text-on);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  display:flex; justify-content:center; align-items:flex-start; min-height:100vh; background:none;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(150% 150% at -10% -10%, #A56EFF, var(--bg1) 50%),
+    radial-gradient(150% 150% at 110% 110%, #FFC371, var(--bg3) 50%),
+    linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3));
+  background-size:cover; background-attachment:fixed;
+}
+.wrap{ width:100%; max-width:1100px; margin:24px auto; padding:0 16px 56px; }
+.card{
+  width:100%; background: linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3));
+  border:1px solid var(--line); border-radius:18px; padding:20px; box-shadow:0 12px 40px #0003, inset 0 1px 0 #fff2;
+  position:relative; overflow:visible;
+}
+.card::before{ content:""; position:absolute; inset:0; border-radius:18px; pointer-events:none;
+  background: linear-gradient(180deg, #fff1, #fff0);
+}
+h1{margin:0 0 8px; text-align:center; font-size:28px}
+.muted{opacity:.9; text-align:center; margin-bottom:16px}
+.info{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:8px; }
+.infoCard{ background:var(--card-solid); border:1px solid var(--line); border-radius:12px; padding:8px 12px; }
+.row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.divider{height:1px; background:var(--line); margin:18px 0}
+input, select, textarea{
+  width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line);
+  background:var(--input); color:#fff; outline:none;
+}
+label{display:block; font-size:12px; opacity:.95; margin-bottom:6px}
+.money{text-align:right} .readonly{opacity:.9}
+.table-scroll{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+table{ width:100%; border-collapse:collapse; margin-top:12px; table-layout:fixed; }
+th,td{ padding:10px; border-bottom:1px solid var(--line); text-align:left; font-size:14px; word-wrap:break-word }
+th{opacity:.95}
+th:last-child, td:last-child{ width:88px; }
+.chip{display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border-radius:999px; background:var(--chip); border:1px solid var(--line); margin:2px}
+.btn{ padding:10px 14px; border-radius:12px; border:1px solid var(--line); background:#fff; color:#111; font-weight:700; cursor:pointer }
+.btn.ghost{background:transparent; color:#fff}
+.btn.gradient{ background:linear-gradient(90deg, var(--bg1), var(--bg2), var(--bg3)); color:#111; border:none }
+.footer{display:flex; gap:12px; justify-content:flex-end; margin-top:18px}
+
+/* roster */
+.rosterGrid{ display:grid; gap:12px; grid-template-columns: 1fr; }
+@media (min-width: 900px){ .rosterGrid{ grid-template-columns: 1fr 1fr 1fr; } }
+.rosterCard{ background:var(--card-solid); border:1px solid var(--line); border-radius:14px; padding:12px; }
+.rosterCard h3{ margin:0 0 8px; font-size:16px }
+
+/* logs */
+.logWrap{ display:grid; gap:12px; grid-template-columns: 1fr; }
+.logCard{ background:var(--card-solid); border:1px solid var(--line); border-radius:14px; padding:12px; }
+.logCard h3{ margin:0 0 10px; font-size:16px; }
+.logEntry{ display:flex; flex-direction:column; gap:10px; align-items:stretch; margin-bottom:10px; }
+.logEntry .timeSel{ min-width:100%; }
+.logEntry textarea{ width:100%; min-height:36px; max-height:260px; overflow:hidden; resize:none; }
+.removeBtn{ align-self:flex-end; background:#fff; color:#111; border:none; border-radius:10px; padding:8px 10px; cursor:pointer; font-weight:700; }
+.addRowBtn{ width:100%; margin-top:6px; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:#fff; color:#111; font-weight:700; cursor:pointer; }
+
+/* jackpots / ethnicity */
+.jackpotsHeader{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.jGrid{ display:grid; gap:12px; grid-template-columns:1fr; }
+@media (min-width: 900px){ .jGrid{ grid-template-columns:1fr 1fr 1fr; } }
+.jItem{ background:var(--card-solid); border:1px solid var(--line); border-radius:14px; padding:12px; display:flex; gap:10px; align-items:center; }
+.jName{ flex:1; }
+.jAmount{ width:160px; }
+.jAmount input{ text-align:right; }
+.editBar{ display:flex; gap:8px; align-items:center; }
+.editField{ background:#2a2144; }
