@@ -8,6 +8,7 @@ import LogsSection from "../components/Logs/LogsSection.jsx";
 import JackpotsSection from "../components/Jackpots/JackpotsSection.jsx";
 import EthnicitySection from "../components/Ethnicity/EthnicitySection.jsx";
 import VipDrawer from "../components/VipDrawer/VipDrawer.jsx";
+import SendPdfForm from "../components/SendPdfForm.jsx"; // ← add if you need it
 
 import { HOURS, LSK } from "../lib/constants.js";
 import { parseMoney, toMoney, numFmt } from "../lib/formatting.js";
@@ -40,7 +41,7 @@ const DEFAULT_ETHNICITY_TEMPLATE = [
 const emptyRow = (hour) => ({ hour, turnover: "", egm: "", vip: {} });
 
 export default function App(){
-  /** Date & Weather */
+  // Date & Weather
   const [sydDate, setSydDate] = useState("");
   const weather = useWeather("Granville,AU");
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function App(){
     return () => clearInterval(id);
   }, []);
 
-  /** Load Drafts (rows, roster, logs, jackpots) */
+  // Drafts
   const defaultRows = HOURS.map(emptyRow);
   const defaultRoster = {
     managers: { open:{names:""}, mid:{names:""}, close:{names:""} },
@@ -73,7 +74,7 @@ export default function App(){
     saveDraft, clearDraft
   } = useLocalDraft({ defaultRows, defaultRoster, defaultLogs });
 
-  /** Templates (jackpot, ethnicity) with localStorage persistence */
+  // Templates persisted in localStorage
   const [jackpotTemplate, setJackpotTemplate] = useState(()=>{
     const saved = localStorage.getItem(LSK.JACKPOTS);
     if (saved) { try { return JSON.parse(saved); } catch {} }
@@ -85,7 +86,7 @@ export default function App(){
     return DEFAULT_ETHNICITY_TEMPLATE;
   });
 
-  /** Increments */
+  // Increments
   const increments = useMemo(() => {
     const inc = [];
     for (let i=0; i<rows.length; i++){
@@ -97,7 +98,7 @@ export default function App(){
     return inc;
   }, [rows]);
 
-  /** Actions (shared) */
+  // Actions
   function updateCell(i, key, value){
     setRows(prev => { const next=[...prev]; next[i] = { ...next[i], [key]: value }; return next; });
   }
@@ -135,7 +136,7 @@ export default function App(){
     alert("Submitted (check the console). We’ll wire email/API next.");
   }
 
-  /** VIP Drawer state */
+  // VIP Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editEthnicity, setEditEthnicity] = useState(ethnicityTemplate[0]?.key || "");
@@ -203,6 +204,9 @@ export default function App(){
           editEthnicity={editEthnicity}
           setEditEthnicity={setEditEthnicity}
         />
+
+        {/* Optional form */}
+        <SendPdfForm />
 
         <div className="footer">
           <button className="btn ghost" onClick={clearDraft}>Clear Draft</button>

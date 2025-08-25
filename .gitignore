@@ -25,3 +25,6 @@ dist-ssr
 # Allow React UI Logs component
 !src/components/Logs/
 !src/components/Logs/**
+.env
+.env.*
+server/.env
